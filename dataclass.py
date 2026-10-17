@@ -17,14 +17,32 @@ class Cohesin:
         # Calculates the loop size
         return self.position.right - self.position.left
 
-    def step(self, seq):
+    def step(self, seq, prob_block=1.0):
+        # Remove the old loop end positions from the sequence
         seq.cohesin_positions.discard(self.position.left)
         seq.cohesin_positions.discard(self.position.right)
-        # Moves both sides it different directions increasing size of the loop between them 
-        if self.position.right + 1 < seq.length:
-            self.position.right += 1
-        if self.position.left - 1 >= 0:
-            self.position.left -= 1
+        
+        # Attempt movement of right loop end one position to the right
+        move_right = self.position.right + 1
+        if move_right < seq.length:
+            # Check for CTCF position and block probability
+            blocked = (
+                move_right in seq.ctcf_positions and random.random() < prob_block
+            )
+            if not blocked:
+                self.position.right = move_right
+
+
+        # Attempt movement of left loop end one posisiont to the left
+        move_left = self.position.left -1
+        if move_left >= 0:
+            # Check for CTCF position and block probability
+            blocked = (
+                move_left in seq.ctcf_positions and random.random() < prob_block
+            )
+            if not blocked:
+                self.position.left = move_left
+
         # Updates current positions on the sequence
         seq.cohesin_positions.add(self.position.left)
         seq.cohesin_positions.add(self.position.right)
