@@ -47,7 +47,8 @@ def snapshot(cohesins):
 
 
 def main():
-    seq = Sequence(length = 10000)
+    ctcf_sites = {2000, 2500, 6000}
+    seq = Sequence(length = 10000, ctcf_positions=ctcf_sites)
     cohesins = [Cohesin(position = OrderedPair(-1, -1))]
     time = 10000
     snapshots, loop_sizes = loop(cohesins, seq, time)
