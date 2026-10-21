@@ -1,6 +1,6 @@
 from dataclass import Sequence, OrderedPair, Cohesin
 import random
-
+from visualization import plot_arcs
 
 def loop(cohesins, seq, time):
     """
@@ -53,7 +53,9 @@ def main():
     time = 10000
     snapshots, loop_sizes = loop(cohesins, seq, time)
     print(loop_sizes)
-    print(sum(loop_sizes)/len(loop_sizes)) 
+    print(sum(loop_sizes)/len(loop_sizes))
+
+    plot_arcs([(1209, 1400), (4600, 4800), (3400, 3500)])
 
 if __name__ == "__main__":
     main()
