@@ -1,4 +1,4 @@
-from dataclass import Sequence, OrderedPair, Cohesin
+from dataclass import Sequence, OrderedPair, Cohesin, ContactMap
 import random
 
 
@@ -45,6 +45,13 @@ def snapshot(cohesins):
         snapshots.append((c.position.left, c.position.right))
     return snapshots
 
+def build_contact_map(seq, snapshots, bin_width=10):
+    contact = ContactMap(sequence = seq, bin_width = bin_width)
+
+    for loops in snapshots:
+        contact.add_snapshot(loops)
+
+    return contact.average()
 
 def main():
     ctcf_sites = {2000, 2500, 6000}
@@ -52,8 +59,13 @@ def main():
     cohesins = [Cohesin(position = OrderedPair(-1, -1))]
     time = 10000
     snapshots, loop_sizes = loop(cohesins, seq, time)
+    contact_map = build_contact_map(seq, snapshots)
+
     print(loop_sizes)
     print(sum(loop_sizes)/len(loop_sizes)) 
+    print()
+    print("Contact Matrix:")
+    print(contact_map)
 
 if __name__ == "__main__":
     main()
