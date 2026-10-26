@@ -115,12 +115,14 @@ class ContactMap:
         """
         current_snapshot_mtx = self._no_loop.copy()
         for left, right in loops:
-            # FInd the left most and right most bin for current loop
+            if right <= left:
+                continue # newly bound cohesin, no loop yet
+            # Find the left most and right most bin for current loop
             left_bin = left // self.bin_width
             right_bin = right //self.bin_width
 
             # Multiply all probabilities within the loop by multiplier
-            current_snapshot_mtx[left_bin:right_bin + 1][left_bin:right_bin + 1] *= self.loop_multiplier
+            current_snapshot_mtx[left_bin:right_bin + 1, left_bin:right_bin + 1] *= self.loop_multiplier    #fixed calculation error
 
         self.total += current_snapshot_mtx
         self.num_snapshots += 1
@@ -130,3 +132,10 @@ class ContactMap:
             return self.total/self.num_snapshots
         else:
             return self.total
+
+    def observed_over_expected(self):
+        """
+        Average map divided by the no-loop baseline. Divides out the distance baseline
+        so only the effect of loops is left.
+        """
+        return self.average()/self._no_loop
